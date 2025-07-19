@@ -1,26 +1,48 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from 'react';
+import { Pedido } from './types/Pedido';
+import { pedidoService } from './services/pedidoService';
+import { PedidoForm } from './components/PedidoForm';
+import { FiltroPedidos } from './components/FiltroPedidos';
+import styled from 'styled-components';
 
 const Container = styled.div`
-  background-color: #f0f0f0;
-  padding: 40px;
-  text-align: center;
-`;
-
-const Title = styled.h1`
-  color: #007bff;
-  font-size: 2rem;
+  padding: 2rem;
 `;
 
 function App() {
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [filtro, setFiltro] = useState('');
+
+  useEffect(() => {
+    // ✅ APENAS essa parte deve estar aqui
+    pedidoService
+      .listar()
+      .then(setPedidos)
+      .catch((err) => console.error('Erro ao buscar pedidos:', err));
+  }, []);
+
+  const pedidosFiltrados = pedidos.filter((pedido) =>
+    pedido.cliente.toLowerCase().includes(filtro.toLowerCase())
+  );
+
+  const handleAdicionarPedido = (novo: Pedido) => {
+    setPedidos([...pedidos, novo]);
+  };
+
   return (
     <Container>
-      <Title>Lista de Pedidos Portobello</Title>
-      <p>Frontend com React + TypeScript + styled-components</p>
+      <h1>Lista de Pedidos</h1>
+      <PedidoForm onAdd={handleAdicionarPedido} />
+      <FiltroPedidos filtro={filtro} setFiltro={setFiltro} />
+      <ul>
+        {pedidosFiltrados.map((pedido) => (
+          <li key={pedido.id}>
+            {pedido.cliente} - {pedido.produto} ({pedido.quantidade})
+          </li>
+        ))}
+      </ul>
     </Container>
   );
 }
 
 export default App;
-
-
