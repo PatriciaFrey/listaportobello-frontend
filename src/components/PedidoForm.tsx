@@ -29,19 +29,22 @@ export const PedidoForm = ({ onAdd }: { onAdd: (pedido: Pedido) => void }) => {
   const [produto, setProduto] = useState('');
   const [quantidade, setQuantidade] = useState(1);
 
-  // Defina o valor unitário aqui (ou traga de algum lugar real no sistema)
-  const precoUnitario = 100;
+  const precoUnitario = 100; // valor fixo de exemplo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const novoPedido: Omit<Pedido, 'id'> = {
-      cliente,
+  cliente,
+  itens: [
+    {
       produto,
       quantidade,
-      data: new Date().toISOString(), // ou outro formato esperado pelo backend
-      valorTotal: precoUnitario * quantidade,
-    };
+      precoUnitario,
+    },
+  ],
+  total: quantidade * precoUnitario,
+};
 
     try {
       const pedidoCriado = await pedidoService.criar(novoPedido);
@@ -76,6 +79,7 @@ export const PedidoForm = ({ onAdd }: { onAdd: (pedido: Pedido) => void }) => {
         value={quantidade}
         onChange={(e) => setQuantidade(Number(e.target.value))}
         required
+        min={1}
       />
       <Button type="submit">Adicionar Pedido</Button>
     </Form>

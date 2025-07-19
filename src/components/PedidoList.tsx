@@ -25,11 +25,9 @@ export const PedidoList = ({ pedidos }: PedidoListProps) => {
     <List>
       {pedidos.map((pedido) => (
         <Item key={pedido.id}>
-          <strong>Cliente:</strong> {pedido.cliente}<br />
-          <strong>Produto:</strong> {pedido.produto}<br />
-          <strong>Quantidade:</strong> {pedido.quantidade}<br />
-          <strong>Valor Total:</strong> R$ {pedido.valorTotal.toFixed(2)}<br />
-          <strong>Data:</strong> {new Date(pedido.data).toLocaleString()}
+<td>{pedido.itens.map(item => item.produto).join(', ')}</td>
+<td>{pedido.itens.map(item => item.quantidade).join(', ')}</td>
+<td>R$ {pedido.total.toFixed(2)}</td>
         </Item>
       ))}
     </List>

@@ -43,12 +43,9 @@ export const ListaPedidos: React.FC = () => {
         <tbody>
           {pedidos.map((pedido) => (
             <tr key={pedido.id}>
-              <td>{pedido.id}</td>
-              <td>{pedido.cliente}</td>
-              <td>{pedido.produto}</td>
-              <td>{pedido.quantidade}</td>
-              <td>R$ {pedido.valorTotal.toFixed(2)}</td>
-              <td>{new Date(pedido.data).toLocaleDateString()}</td>
+      <td>{pedido.itens.map(item => item.produto).join(', ')}</td>
+<td>{pedido.itens.map(item => item.quantidade).join(', ')}</td>
+<td>R$ {pedido.total.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

@@ -34,13 +34,13 @@ function App() {
       <h1>Lista de Pedidos</h1>
       <PedidoForm onAdd={handleAdicionarPedido} />
       <FiltroPedidos filtro={filtro} setFiltro={setFiltro} />
-      <ul>
-        {pedidosFiltrados.map((pedido) => (
-          <li key={pedido.id}>
-            {pedido.cliente} - {pedido.produto} ({pedido.quantidade})
-          </li>
-        ))}
-      </ul>
+<ul>
+  {pedidosFiltrados.map((pedido) => (
+    <li key={pedido.id}>
+      {pedido.cliente} - {pedido.itens.map((item) => `${item.produto} (${item.quantidade})`).join(', ')}
+    </li>
+  ))}
+</ul>
     </Container>
   );
 }
