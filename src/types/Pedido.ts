@@ -9,6 +9,7 @@ export interface ItemPedido {
 export interface Pedido {
   id: string;
   cliente: string;
+  dataCriacao: string;
   itens: ItemPedido[];
   total: number;
 }

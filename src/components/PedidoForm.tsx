@@ -1,26 +1,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Pedido } from '../types/Pedido';
-import { pedidoService } from '../services/pedidoService';
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 100%;
   margin: 0 auto;
   background-color: #fff;
-  padding: 2rem;
+  padding: 0rem;
   border-radius: 8px;
-`;
-
-const InputGroup = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
 `;
 
 const Input = styled.input`
@@ -30,6 +21,7 @@ const Input = styled.input`
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
+  transition: border-color 0.3s;
 
   &:focus {
     border-color: #1976d2;
@@ -54,6 +46,11 @@ const Button = styled.button`
   &:hover {
     background-color: #1565c0;
   }
+
+  &:disabled {
+    background-color: #a0c4ff;
+    cursor: not-allowed;
+  }
 `;
 
 const ErrorMessage = styled.p`
@@ -61,17 +58,20 @@ const ErrorMessage = styled.p`
   font-size: 0.9rem;
 `;
 
-export const PedidoForm = ({ onAdd }: { onAdd: (pedido: Pedido) => void }) => {
+export const PedidoForm = ({ onAdd }: { onAdd: (pedido: Omit<Pedido, 'id'>) => Promise<void> }) => {
   const [cliente, setCliente] = useState('');
   const [produto, setProduto] = useState('');
   const [quantidade, setQuantidade] = useState(1);
   const [precoUnitario, setPrecoUnitario] = useState(100);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!cliente || !produto || !quantidade || precoUnitario <= 0) {
+    if (loading) return;
+
+    if (!cliente || !produto || quantidade < 1 || precoUnitario <= 0) {
       setError('Todos os campos são obrigatórios, e o preço unitário deve ser positivo.');
       return;
     }
@@ -86,18 +86,21 @@ export const PedidoForm = ({ onAdd }: { onAdd: (pedido: Pedido) => void }) => {
         },
       ],
       total: quantidade * precoUnitario,
+      dataCriacao: new Date().toISOString(),
     };
 
+    setLoading(true);
     try {
-      const pedidoCriado = await pedidoService.criar(novoPedido);
-      onAdd(pedidoCriado);
+      await onAdd(novoPedido);
       setCliente('');
       setProduto('');
       setQuantidade(1);
-      setPrecoUnitario(100); 
-      setError(null); 
-    } catch (err) {
-      console.error('Erro ao criar pedido:', err);
+      setPrecoUnitario(100);
+      setError(null);
+    } catch {
+      setError('Erro ao adicionar pedido.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,36 +120,27 @@ export const PedidoForm = ({ onAdd }: { onAdd: (pedido: Pedido) => void }) => {
         onChange={(e) => setProduto(e.target.value)}
         required
       />
-
-      <InputGroup>
-        <div>
-          <label>Quantidade</label>
-          <Input
-            type="number"
-            placeholder="Quantidade"
-            value={quantidade}
-            onChange={(e) => setQuantidade(Number(e.target.value))}
-            required
-            min={1}
-          />
-        </div>
-
-        <div>
-          <label>Preço Unitário</label>
-          <Input
-            type="number"
-            placeholder="Preço Unitário"
-            value={precoUnitario}
-            onChange={(e) => setPrecoUnitario(Number(e.target.value))}
-            required
-            min={0.01}
-            step="0.01"
-          />
-        </div>
-      </InputGroup>
-
+      <Input
+        type="number"
+        placeholder="Quantidade"
+        value={quantidade}
+        onChange={(e) => setQuantidade(Number(e.target.value))}
+        required
+        min={1}
+      />
+      <Input
+        type="number"
+        placeholder="Preço Unitário"
+        value={precoUnitario}
+        onChange={(e) => setPrecoUnitario(Number(e.target.value))}
+        required
+        min={0.01}
+        step="0.01"
+      />
       {error && <ErrorMessage>{error}</ErrorMessage>}
-      <Button type="submit">Adicionar Pedido</Button>
+      <Button type="submit" disabled={loading}>
+        {loading ? 'Adicionando...' : 'Adicionar Pedido'}
+      </Button>
     </Form>
   );
 };

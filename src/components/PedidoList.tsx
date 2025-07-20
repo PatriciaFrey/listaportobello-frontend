@@ -74,36 +74,46 @@ const Item = styled.li`
     font-size: 1.1rem;
     text-decoration: underline;
   }
+
+  .expand-button-wrapper {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+    color: #1976d2;
+    cursor: pointer;
+    text-decoration: underline;
+  }
 `;
 
 interface PedidoListProps {
   pedidos: Pedido[];
   filtro: string;
+  filtroData: string | null;
+  recarregarPedidos: () => Promise<void>; 
 }
 
-export const PedidoList = ({ pedidos, filtro }: PedidoListProps) => {
-  const [lista, setLista] = useState<Pedido[]>([]);
-  const [expanded, setExpanded] = useState<string | null>(null); // Estado para controlar qual pedido está expandido
+export const PedidoList = ({ pedidos, filtro, filtroData, recarregarPedidos }: PedidoListProps) => {
+  const [expanded, setExpanded] = useState<string | null>(null);
 
-  useEffect(() => {
-    setLista(pedidos);
-  }, [pedidos]);
-
-  const pedidosFiltrados = lista.filter((pedido) =>
-    pedido.cliente.toLowerCase().includes(filtro.toLowerCase())
-  );
+  const pedidosFiltrados = pedidos.filter(pedido => {
+    const matchesCliente = pedido.cliente.toLowerCase().includes(filtro.toLowerCase());
+    const matchesData = filtroData ? pedido.dataCriacao.startsWith(filtroData) : true;
+    return matchesCliente && matchesData;
+  });
 
   const handleExcluir = async (id: string) => {
     try {
       await deletarPedido(id);
-      setLista((prevLista) => prevLista.filter((p) => p.id !== id));
+      await recarregarPedidos(); // Recarrega lista do backend após exclusão
     } catch (error) {
       alert("Erro ao excluir pedido");
     }
   };
 
   const handleExpand = (id: string) => {
-    setExpanded(expanded === id ? null : id); // Alterna entre expandir e recolher o pedido
+    setExpanded(expanded === id ? null : id);
   };
 
   return (
@@ -121,7 +131,6 @@ export const PedidoList = ({ pedidos, filtro }: PedidoListProps) => {
             </p>
 
             <div className="produtos">
-              {/* Exibir a seta ou botão de expandir */}
               <span
                 className="expand-button"
                 onClick={() => handleExpand(pedido.id)}
@@ -129,7 +138,6 @@ export const PedidoList = ({ pedidos, filtro }: PedidoListProps) => {
                 {expanded === pedido.id ? "^" : "+"}
               </span>
 
-             
               {expanded === pedido.id && (
                 <>
                   {pedido.itens.length > 0 ? (
@@ -143,7 +151,9 @@ export const PedidoList = ({ pedidos, filtro }: PedidoListProps) => {
                   ) : (
                     <p>Sem produtos para este pedido.</p>
                   )}
-
+                  <p>
+                    <strong>Data de Criação:</strong> {new Date(pedido.dataCriacao).toLocaleDateString('pt-BR')}
+                  </p>
                   <p className="total">
                     <strong>Total:</strong> R$ {pedido.total.toFixed(2)}
                   </p>
