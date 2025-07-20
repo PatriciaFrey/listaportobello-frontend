@@ -4,19 +4,36 @@ import { pedidoService } from '../services/pedidoService';
 import { PedidoForm } from '../components/PedidoForm';
 import { PedidoList } from '../components/PedidoList';
 import styled from 'styled-components'; 
+import { FiltroPedidos } from '../components/FiltroPedidos'; 
+import Modal from '../components/Modal'; 
 
 const Titulo = styled.h1`
-  text-align: center; /* Centraliza o texto */
-  font-size: 2.5rem; /* Tamanho do texto */
-  font-weight: bold; /* Negrito */
-  color: #333; /* Cor do texto */
-  margin-top: 20px; /* Espaço no topo */
-  margin-bottom: 20px; /* Espaço na parte inferior */
-  font-family: 'Arial', sans-serif; /* Fonte personalizada */
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif;
+`;
+
+const MainContainer = styled.div`
+  padding: 0 20px;  
+  margin-top: 20px; 
+  margin-bottom: 20px; 
+`;
+
+const ActionsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
 `;
 
 export const PedidosPage = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [filtro, setFiltro] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const carregarPedidos = async () => {
     try {
@@ -31,16 +48,41 @@ export const PedidosPage = () => {
     setPedidos((prev) => [...prev, novo]);
   };
 
+  const toggleModal = () => setShowModal(!showModal);
+
   useEffect(() => {
     carregarPedidos();
   }, []);
 
   return (
-    <div>
-      {/* Usando o componente estilizado */}
+    <MainContainer>
       <Titulo>Gestão de Pedidos</Titulo>
-      <PedidoForm onAdd={adicionarPedido} />
-      <PedidoList pedidos={pedidos} />
-    </div>
+      
+      <ActionsContainer>
+        <FiltroPedidos filtro={filtro} setFiltro={setFiltro} />
+        <button 
+          onClick={toggleModal} 
+          style={{ 
+            padding: '0.8rem', 
+            fontSize: '1rem', 
+            backgroundColor: '#1976d2', 
+            color: 'white', 
+            border: 'none', 
+            cursor: 'pointer', 
+            borderRadius: '8px' 
+          }}
+        >
+          Adicionar Pedido
+        </button>
+      </ActionsContainer>
+     
+      {showModal && (
+        <Modal onClose={toggleModal}>
+          <PedidoForm onAdd={adicionarPedido} />
+        </Modal>
+      )}
+
+      <PedidoList pedidos={pedidos} filtro={filtro} />
+    </MainContainer>
   );
 };

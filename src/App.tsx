@@ -3,6 +3,7 @@ import { Pedido } from './types/Pedido';
 import { pedidoService } from './services/pedidoService';
 import { PedidoForm } from './components/PedidoForm';
 import { FiltroPedidos } from './components/FiltroPedidos';
+import { PedidoList } from './components/PedidoList';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -14,7 +15,6 @@ function App() {
   const [filtro, setFiltro] = useState('');
 
   useEffect(() => {
-    // ✅ APENAS essa parte deve estar aqui
     pedidoService
       .listar()
       .then(setPedidos)
@@ -34,13 +34,7 @@ function App() {
       <h1>Lista de Pedidos</h1>
       <PedidoForm onAdd={handleAdicionarPedido} />
       <FiltroPedidos filtro={filtro} setFiltro={setFiltro} />
-<ul>
-  {pedidosFiltrados.map((pedido) => (
-    <li key={pedido.id}>
-      {pedido.cliente} - {pedido.itens.map((item) => `${item.produto} (${item.quantidade})`).join(', ')}
-    </li>
-  ))}
-</ul>
+      <PedidoList pedidos={pedidosFiltrados} filtro={filtro} />
     </Container>
   );
 }

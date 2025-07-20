@@ -1,46 +1,87 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#  Sistema de Pedidos B2B - Frontend
 
-## Available Scripts
+Este projeto é o frontend de um sistema de gestão de pedidos B2B, desenvolvido em **React com TypeScript**, com estilização via **styled-components** e comunicação com um backend Java via API REST.
 
-In the project directory, you can run:
+## Funcionalidades
 
-### `npm start`
+- Cadastro de pedidos com cliente, produtos, quantidades e preço.
+- Listagem dos pedidos com cálculo do valor total.
+- Filtro de pedidos por nome do cliente.
+- Exclusão de pedidos com atualização da lista em tempo real.
+- Interface responsiva e estilizada com `styled-components`.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Estrutura do Projeto
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```
+listaportobello-frontend/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── PedidoForm.tsx         # Formulário de criação de pedido
+│   │   └── PedidoList.tsx         # Lista de pedidos com opção de exclusão
+│   ├── services/
+│   │   └── pedidoService.ts       # Comunicação com a API
+│   ├── types/
+│   │   └── Pedido.ts              # Tipagem do modelo de dados
+│   ├── App.tsx                    # Componente principal
+│   └── index.tsx                  # Ponto de entrada do React
+├── package.json
+└── tsconfig.json
+```
 
-### `npm test`
+## Tecnologias Utilizadas
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- [React](https://reactjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [styled-components](https://styled-components.com/)
+- [Axios](https://axios-http.com/) (via `pedidoService.ts`)
 
-### `npm run build`
+## Como rodar o projeto
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Pré-requisitos
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js (v18 ou superior)
+- npm ou yarn
+- Backend rodando na porta correta (ex: `http://localhost:8080`)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Passo a passo
 
-### `npm run eject`
+1. **Clone o repositório**:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+git clone https://github.com/seu-usuario/listaportobello-frontend.git
+cd listaportobello-frontend
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. **Instale as dependências**:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```bash
+npm install
+# ou
+yarn
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+3. **Configure a URL da API (se necessário)**  
+No arquivo `pedidoService.ts`, ajuste a URL da API conforme o backend:
 
-## Learn More
+```ts
+const API_URL = 'http://localhost:8080/pedidos';
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+4. **Inicie a aplicação**:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm start
+# ou
+yarn start
+```
+
+O sistema será aberto no navegador em `http://localhost:3000`.
+
+## Contato
+
+Desenvolvido por Patricia Frey  
+Email: patricia.frey@gmail.com  
+LinkedIn:(https://www.linkedin.com/in/patricia-frey-7645131a5/)
+Git:https://github.com/PatriciaFrey
