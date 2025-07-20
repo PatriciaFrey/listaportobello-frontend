@@ -3,6 +3,17 @@ import { Pedido } from '../types/Pedido';
 import { pedidoService } from '../services/pedidoService';
 import { PedidoForm } from '../components/PedidoForm';
 import { PedidoList } from '../components/PedidoList';
+import styled from 'styled-components'; 
+
+const Titulo = styled.h1`
+  text-align: center; /* Centraliza o texto */
+  font-size: 2.5rem; /* Tamanho do texto */
+  font-weight: bold; /* Negrito */
+  color: #333; /* Cor do texto */
+  margin-top: 20px; /* Espaço no topo */
+  margin-bottom: 20px; /* Espaço na parte inferior */
+  font-family: 'Arial', sans-serif; /* Fonte personalizada */
+`;
 
 export const PedidosPage = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -26,7 +37,8 @@ export const PedidosPage = () => {
 
   return (
     <div>
-      <h1>Gestão de Pedidos</h1>
+      {/* Usando o componente estilizado */}
+      <Titulo>Gestão de Pedidos</Titulo>
       <PedidoForm onAdd={adicionarPedido} />
       <PedidoList pedidos={pedidos} />
     </div>
